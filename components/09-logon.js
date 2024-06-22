@@ -98,7 +98,8 @@ class SteamUserLogon extends SteamUserMachineAuth {
 					chat_mode: 2, // enable new chat
 					web_logon_nonce: details.webLogonToken && details.steamID ? details.webLogonToken : undefined,
 					_steamid: details.steamID,
-					_machineAuthToken: details.machineAuthToken
+					_machineAuthToken: details.machineAuthToken,
+					awaitDeviceApproval: details.awaitDeviceApproval
 				};
 			}
 
@@ -453,9 +454,9 @@ class SteamUserLogon extends SteamUserMachineAuth {
 				return resolve(false);
 			}
 
-			if (sessionStartResult.actionRequired) {
+			if (sessionStartResult.actionRequired && !this._logOnDetails.awaitDeviceApproval) {
 				// We need a code of some kind. Technically we could just wait for a device approval, but in the majority
-				// of consumer use-cases, the app seemingly hanging while waiting for this isn't desirable.
+				//of consumer use-cases, the app seemingly hanging while waiting for this isn't desirable.
 				session.cancelLoginAttempt();
 
 				// We need to synthesize a LogOnResponse eresult
